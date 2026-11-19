@@ -56,7 +56,7 @@ async def main():
             return f"{h:02d}:{m:02d}:{sec:06.3f}".replace(".",",")
         srt.append(f"{i+1}\n{stamp(start)} --> {stamp(end)}\n{txt}\n")
     (OUT/"subtitles-my.srt").write_text("\n".join(srt),encoding="utf-8")
-    (OUT/"narration-my.txt").write_text("\n\n".join(t for (t,) in SECTIONS),encoding="utf-8")
+    (OUT/"narration-my.txt").write_text("\n\n".join(SECTIONS),encoding="utf-8")
     lst=WORK/"beats.txt"
     lst.write_text("".join("file '"+str(p.resolve())+"'\n" for p in wavs),encoding="utf-8")
     narration=WORK/"narration.wav"
