@@ -102,7 +102,18 @@ async def main():
     src="aevalsrc=0.032*sin(2*PI*110*t)+0.023*sin(2*PI*164.81*t)+0.018*sin(2*PI*220*t)+0.009*sin(2*PI*329.63*t)+0.008*sin(2*PI*55*t):s=48000:d=300"
     run(["ffmpeg","-y","-f","lavfi","-i",src,"-af","afade=t=in:st=0:d=4,afade=t=out:st=294:d=6,volume=0.8","-t","300","-c:a","pcm_s16le",str(music)])
     blender_script=Path(__file__).with_name("scene.py")
-    run(["blender","-b","--python",str(blender_script),"--",str(FRAMES)])
+    # One Blender process renders the timeline in resumable 120-frame batches.
+    # The scene script skips batches whose PNG frames already exist.
+    batch_env=os.environ.copy()
+    batch_env['F35_FRAME_START']='1'
+    batch_env['F35_FRAME_END']='3600'
+    batch_env['F35_BATCH_SIZE']='120'
+    print('F35_RENDER_BEGIN: 3600 frames; batch size 120; resume enabled',flush=True)
+    subprocess.run(['blender','-b','--python',str(blender_script),'--',str(FRAMES)],check=True,env=batch_env)
+    expected_frames=sum(1 for i in range(1,3601) if (FRAMES/f'frame_{i:04d}.png').is_file() and (FRAMES/f'frame_{i:04d}.png').stat().st_size>0)
+    print(f'F35_FRAME_AUDIT {expected_frames}/3600 frames present',flush=True)
+    if expected_frames!=3600:
+        raise RuntimeError(f'Frame render incomplete: {expected_frames}/3600')
     profile=os.environ.get("RENDER_PROFILE","standard")
     crf="18" if profile=="high" else ("21" if profile=="standard" else "25")
     mp4=OUT/"GI-KO-KO-F35C-Lightning-II-3D-Explainer.mp4"
