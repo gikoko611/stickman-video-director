@@ -329,7 +329,7 @@ def main():
              "-vf",vf,"-map","0:v:0","-map","1:a:0","-t","180",
              "-c:v","libx264","-preset","slow","-profile:v","main","-level","3.0",
              "-pix_fmt","yuv420p","-r",str(FPS),"-b:v",f"{vb}k","-maxrate",f"{vb}k","-bufsize",f"{vb*2}k",
-             "-pass","1","-passlogfile",str(WORK/"passlog"),"-an","-f","mp4",os.devnull])
+             "-pass","1","-passlogfile",str(WORK/"passlog"),"-an","-f","null",os.devnull])
         run(["ffmpeg","-y","-loglevel","error","-i",str(silent_video),"-i",str(mixed),
              "-vf",vf,"-map","0:v:0","-map","1:a:0","-t","180",
              "-c:v","libx264","-preset","slow","-profile:v","main","-level","3.0",
