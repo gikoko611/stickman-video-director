@@ -62,7 +62,7 @@ async def main():
     narration=WORK/"narration.wav"
     run(["ffmpeg","-y","-f","concat","-safe","0","-i",str(lst),"-c:a","pcm_s16le",str(narration)])
     music=WORK/"music.wav"
-    src="aevalsrc=0.032*sin(2*PI*110*t)+0.023*sin(2*PI*164.81*t)+0.018*sin(2*PI*220*t)+0.009*sin(2*PI*329.63*t):s=48000:d=300"
+    src="aevalsrc=0.032*sin(2*PI*110*t)+0.023*sin(2*PI*164.81*t)+0.018*sin(2*PI*220*t)+0.009*sin(2*PI*329.63*t)+0.008*sin(2*PI*55*t):s=48000:d=300"
     run(["ffmpeg","-y","-f","lavfi","-i",src,"-af","afade=t=in:st=0:d=4,afade=t=out:st=294:d=6,volume=0.8","-t","300","-c:a","pcm_s16le",str(music)])
     blender_script=Path(__file__).with_name("scene.py")
     run(["blender","-b","--python",str(blender_script),"--",str(FRAMES)])
