@@ -1,4 +1,4 @@
-name: F-35 Lightning II 3D Explainer
+name: F-35C Lightning II Hybrid 3D Explainer
 on:
   workflow_dispatch:
     inputs:
