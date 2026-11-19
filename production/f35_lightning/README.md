@@ -4,7 +4,7 @@ Five-minute F-35C carrier-variant educational animation rendered with Blender Ee
 
 ## Run
 1. Open GitHub Actions.
-2. Select **F-35 Lightning II 3D Explainer**.
+2. Select **F-35C Lightning II Hybrid 3D Explainer**.
 3. Choose **high** for the default high-quality render, or standard / compact for faster alternatives, then press **Run workflow**.
 4. Download the artifact **GI-KO-KO-F35C-Lightning-II-3D-Explainer**.
 
