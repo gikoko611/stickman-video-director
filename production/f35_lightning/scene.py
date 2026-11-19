@@ -189,11 +189,6 @@ for i,obj in enumerate(parts):
     obj.location=base+direction*1.25; obj.keyframe_insert(data_path="location",frame=900)
     obj.location=base+direction*1.25; obj.keyframe_insert(data_path="location",frame=1320)
     obj.location=base; obj.keyframe_insert(data_path="location",frame=1560)
-for obj in bpy.data.objects:
-    if obj.animation_data and obj.animation_data.action:
-        for fc in obj.animation_data.action.fcurves:
-            for key in fc.keyframe_points: key.interpolation="BEZIER"
-
 scene=bpy.context.scene
 scene.render.resolution_x=1280; scene.render.resolution_y=720
 scene.render.resolution_percentage=100; scene.render.fps=12
