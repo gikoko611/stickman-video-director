@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-import asyncio, json, os, subprocess, shutil, time
+import asyncio, json, os, subprocess, shutil, time, urllib.request
 from pathlib import Path
-import edge_tts
 
 ROOT=Path(__file__).resolve().parents[2]
 OUT=ROOT/"output"/"f35"; FRAMES=OUT/"frames"; WORK=OUT/"work"
 for p in (OUT,FRAMES,WORK): p.mkdir(parents=True,exist_ok=True)
-VOICE="my-MM-ThihaNeural"
+VOICE="aura-2-thalia-en"
+DEEPGRAM_URL="https://api.deepgram.com/v1/speak?model="+VOICE
 SECTIONS=[
 ("မင်္ဂလာပါ။ ဒီနေ့မှာတော့ ခေတ်မီ တိုက်လေယာဉ် F-35 Lightning II ကို သုံးဖက်မြင် ရုပ်ပုံလှုပ်ရှားမှုနဲ့ လေ့လာကြပါမယ်။ ဒီလေယာဉ်ဟာ ပဉ္စမမျိုးဆက် ဘက်စုံသုံး တိုက်လေယာဉ်တစ်မျိုးဖြစ်ပြီး အမေရိကန် လေတပ်၊ ရေတပ်နဲ့ မရိန်းတပ်တို့ရဲ့ လိုအပ်ချက်အမျိုးမျိုးကို ဖြည့်ဆည်းဖို့ မိသားစုတစ်ခုအဖြစ် ဖွံ့ဖြိုးတိုးတက်လာခဲ့တာ ဖြစ်ပါတယ်။"),
 ("F-35 ရဲ့ ဒီဇိုင်းသမိုင်းကို ကြည့်မယ်ဆိုရင် လေတပ်တစ်ခုတည်းအတွက် မဟုတ်ဘဲ ဝန်ဆောင်မှုအမျိုးမျိုးအတွက် အခြေခံပလက်ဖောင်းတစ်ခုတည်းကို မျှဝေသုံးစွဲနိုင်ဖို့ ရည်ရွယ်ခဲ့တာကို တွေ့ရပါတယ်။ ဒါကြောင့် ပုံစံကွဲ သုံးမျိုးရှိလာပါတယ်။ F-35A က ပုံမှန်ပြေးလမ်းကနေ ပျံတက်ဆင်းသက်နိုင်တဲ့ မော်ဒယ်ဖြစ်ပါတယ်။"),
@@ -25,20 +25,56 @@ SECTIONS=[
 ("အနှစ်ချုပ်ရရင် F-35 Lightning II ဟာ ကိုယ်ထည်၊ တောင်ပံ၊ အမြီးပိုင်း၊ လေယာဉ်မှူးခန်း၊ အင်ဂျင်နဲ့ အာရုံခံစနစ်တွေကို ပေါင်းစည်းထားတဲ့ ခေတ်မီ လေယာဉ်မိသားစုတစ်ခု ဖြစ်ပါတယ်။ ဒီဗီဒီယိုဟာ အများပြည်သူသိရှိနိုင်တဲ့ အချက်အလက်တွေကို အခြေခံထားတဲ့ ပညာပေး 3D ရှင်းလင်းချက်ဖြစ်ပါတယ်။ ကြည့်ရှုပေးတဲ့အတွက် ကျေးဇူးတင်ပါတယ်။")
 ]
 
+ENGLISH_SECTIONS=[
+"Hello, and welcome. Today, we will explore the modern F-35 Lightning II through a three-dimensional visual presentation. It is a fifth-generation multirole fighter aircraft family developed to meet different requirements across the United States Air Force, Navy, and Marine Corps.",
+"The F-35 program was designed around a shared aircraft platform that could serve several military branches rather than just one. This led to three main variants. The F-35A is designed for conventional runway takeoff and landing.",
+"The F-35B is specialized for short takeoff and vertical landing. The F-35C is designed for aircraft carrier operations. Its larger wings, folding wingtips, reinforced landing gear, and arresting tailhook are key carrier-variant features.",
+"Now, let's take a look around the exterior of our three-dimensional model. At the front is the pointed nose, followed by the central fuselage and the wings on either side. This is an educational model intended to explain the general shape and roles of major components, not an exact factory engineering design.",
+"The fuselage is the central structure that connects the aircraft's major components. It brings together the cockpit, engine installation area, fuel storage, and other systems. Its weight, strength, and shape all influence the performance of the aircraft.",
+"The wings are essential for producing lift during flight. The F-35C has larger wings to support carrier operations, and its wingtips can fold to save space aboard a ship. Control surfaces along the rear of the wings help the aircraft turn and change direction.",
+"At the rear, we can see two outward-canted vertical stabilizers. They help maintain directional stability and work together with the horizontal control surfaces. Beneath the tail is an arresting hook, designed to engage a carrier deck arresting cable during landing. The exploded view separates some of these exterior assemblies for illustration.",
+"The cockpit includes a protective canopy, a seat, and flight controls. The F-35 also uses a modern helmet-mounted display to present information within the pilot's field of view. In this model, the cockpit interior is shown only at a simplified educational level.",
+"Sensors and avionics play an important role in modern aircraft. The F-35 combines information from multiple sensing systems to help the pilot understand the surrounding environment. This video describes their general purpose without presenting operational system details.",
+"The F-35C is powered by a single Pratt and Whitney F135 engine. The engine takes in air and produces thrust to propel the aircraft. This three-dimensional model shows only the exterior and a simplified fan concept; it does not reproduce the detailed internal engine design.",
+"The landing gear supports the aircraft while taxiing, accelerating on the deck, and landing. The F-35C's twin nose wheels and reinforced main landing gear are designed to handle the demanding loads associated with carrier operations. Inspection of the wheels and struts is also an important part of maintenance.",
+"Aircraft production involves design, component manufacturing, assembly, and quality inspection. Many international partner companies have contributed to the F-35 program. It is an example of collaboration across the modern aerospace industry.",
+"Modern aircraft use metals and composite materials selected for specific requirements. Engineers consider weight reduction, structural strength, and resistance to environmental conditions. Material selection and maintenance are important to safety and reliability throughout an aircraft's service life.",
+"Final inspections can include the fuselage, wings, electrical systems, engine, and ground tests. These checks are carried out in stages, and each stage must meet its required standards before the process continues. Aircraft reliability depends on systematic inspection and testing.",
+"In summary, the F-35 Lightning II is a modern aircraft family that combines a fuselage, wings, tail surfaces, cockpit, engine, and sensor systems. This video is an educational three-dimensional explanation based on publicly available information. Thank you for watching."
+]
+
 def run(cmd):
     subprocess.run(cmd,check=True)
 def probe(path):
     return float(subprocess.check_output(["ffprobe","-v","error","-show_entries","format=duration","-of","default=noprint_wrappers=1:nokey=1",str(path)],text=True).strip())
-async def make_voice(i,text):
+def make_voice(i,text):
+    key=os.environ.get("DEEPGRAM_API_KEY","").strip()
+    if not key:
+        raise SystemExit("DEEPGRAM_API_KEY is missing. Add it in GitHub Settings > Secrets and variables > Actions.")
     p=WORK/f"voice_{i:02d}.mp3"
-    await edge_tts.Communicate(text,VOICE,rate="-3%").save(str(p))
-    return p
+    payload=json.dumps({"text":text}).encode("utf-8")
+    req=urllib.request.Request(DEEPGRAM_URL,data=payload,headers={"Authorization":"Token "+key,"Content-Type":"application/json"},method="POST")
+    last_error=None
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req,timeout=120) as response:
+                audio=response.read()
+            if not audio or len(audio)<1000:
+                raise RuntimeError("Deepgram returned an empty or invalid audio response")
+            p.write_bytes(audio)
+            return p
+        except Exception as exc:
+            last_error=exc
+            if attempt<2: time.sleep(3*(attempt+1))
+    raise RuntimeError(f"Deepgram TTS failed for section {i}: {last_error}")
 
 async def main():
+    if len(ENGLISH_SECTIONS)!=len(SECTIONS):
+        raise SystemExit("English narration and Burmese subtitle section counts do not match")
     voice_files=[]
-    for i,text in enumerate(SECTIONS,1):
-        p=await make_voice(i,text); voice_files.append(p)
-        print(f"VOICE {i}/{len(SECTIONS)} complete",flush=True)
+    for i,text in enumerate(ENGLISH_SECTIONS,1):
+        p=make_voice(i,text); voice_files.append(p)
+        print(f"DEEPGRAM ENGLISH VOICE {i}/{len(ENGLISH_SECTIONS)} complete",flush=True)
     concat=WORK/"voice-list.txt"
     with concat.open("w",encoding="utf-8") as f:
         for p in voice_files:f.write("file '"+str(p.resolve())+"'\n")
@@ -57,7 +93,7 @@ async def main():
             return f"{h:02d}:{m:02d}:{sec:06.3f}".replace(".",",")
         srt.append(f"{i+1}\n{stamp(start)} --> {stamp(end)}\n{txt}\n")
     (OUT/"subtitles-my.srt").write_text("\n".join(srt),encoding="utf-8")
-    (OUT/"narration-my.txt").write_text("\n\n".join(SECTIONS),encoding="utf-8")
+    (OUT/"narration-en.txt").write_text("\n\n".join(ENGLISH_SECTIONS),encoding="utf-8")
     lst=WORK/"beats.txt"
     lst.write_text("".join("file '"+str(p.resolve())+"'\n" for p in wavs),encoding="utf-8")
     narration=WORK/"narration.wav"
@@ -74,7 +110,7 @@ async def main():
          "-filter_complex","[1:a][2:a]amix=inputs=2:weights='1 0.20':duration=longest,alimiter=limit=0.95[a]",
          "-map","0:v:0","-map","[a]","-t","300","-c:v","libx264","-preset","veryfast","-crf",crf,"-pix_fmt","yuv420p","-r","12","-c:a","aac","-b:a","128k","-movflags","+faststart",str(mp4)])
     duration=probe(mp4); size=mp4.stat().st_size
-    report={"title":"G.I KO KO — F-35C Lightning II 3D Explainer","duration_seconds":duration,"file_size_bytes":size,"resolution":"1280x720","fps":12,"narration_voice":VOICE,"subtitles":"separate Burmese SRT","aircraft_variant":"F-35C carrier variant","visual_method":"F-35C public-reference educational 3D model, articulated wing-fold features, carrier landing gear and tailhook, cinematic PBR Eevee scene with exploded-view animation","render_quality":"high Eevee PBR, 128 samples, AgX color management","music":"original synthesized ambient score","profile":profile,"note":"Conceptual educational model, not engineering CAD."}
+    report={"title":"G.I KO KO — F-35C Lightning II 3D Explainer","duration_seconds":duration,"file_size_bytes":size,"resolution":"1280x720","fps":12,"narration_voice":"Deepgram Aura-2 "+VOICE,"subtitles":"Myanmar Burmese SRT translated from English narration","aircraft_variant":"F-35C carrier variant","visual_method":"F-35C public-reference educational 3D model, articulated wing-fold features, carrier landing gear and tailhook, cinematic PBR Eevee scene with exploded-view animation","render_quality":"high Eevee PBR, 128 samples, AgX color management","music":"original synthesized ambient score","profile":profile,"note":"Conceptual educational model, not engineering CAD."}
     (OUT/"production-report.json").write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding="utf-8")
     print(json.dumps(report,ensure_ascii=False),flush=True)
     if abs(duration-300)>1.5: raise SystemExit(f"Unexpected runtime: {duration:.2f}s")
