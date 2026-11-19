@@ -42,15 +42,16 @@ async def main():
     concat=WORK/"voice-list.txt"
     with concat.open("w",encoding="utf-8") as f:
         for p in voice_files:f.write("file '"+str(p.resolve())+"'\n")
-    # Fit each narration beat into a 20-second chapter, leaving a natural pause.
+    # Fit every narration chapter into the exact five-minute runtime.
+    segment=300.0/len(SECTIONS); voice_window=segment-1.0
     wavs=[]; srt=[]
     for i,(txt,src) in enumerate(zip(SECTIONS,voice_files)):
-        d=probe(src); speed=max(1.0,d/18.5)
-        speed=min(speed,1.8)
+        d=probe(src); speed=max(1.0,d/voice_window)
+        speed=min(speed,2.0)
         dst=WORK/f"beat_{i+1:02d}.wav"
-        run(["ffmpeg","-y","-i",str(src),"-af",f"atempo={speed:.4f},apad=pad_dur=20,atrim=duration=20","-ar","48000","-ac","2","-c:a","pcm_s16le",str(dst)])
+        run(["ffmpeg","-y","-i",str(src),"-af",f"atempo={speed:.4f},apad=pad_dur={segment:.4f},atrim=duration={segment:.4f}","-ar","48000","-ac","2","-c:a","pcm_s16le",str(dst)])
         wavs.append(dst)
-        start=i*20; end=start+19.7
+        start=i*segment; end=(i+1)*segment-0.15
         def stamp(t):
             h=int(t//3600); m=int((t%3600)//60); sec=t%60
             return f"{h:02d}:{m:02d}:{sec:06.3f}".replace(".",",")
