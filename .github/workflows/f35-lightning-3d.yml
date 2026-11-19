@@ -12,7 +12,7 @@ permissions:
   contents: read
 concurrency:
   group: f35-lightning-3d-explainer
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   render:
     runs-on: ubuntu-latest
