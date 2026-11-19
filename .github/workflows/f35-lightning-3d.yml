@@ -1,0 +1,45 @@
+name: F-35 Lightning II 3D Explainer
+on:
+  workflow_dispatch:
+    inputs:
+      render_profile:
+        description: "3D render profile"
+        required: true
+        type: choice
+        options: [standard, compact]
+        default: standard
+permissions:
+  contents: read
+concurrency:
+  group: f35-lightning-3d-explainer
+  cancel-in-progress: false
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Blender and FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender ffmpeg fonts-noto-core fonts-noto-extra
+          blender --version
+      - name: Install Burmese neural TTS
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install edge-tts
+      - name: Render 3D explainer
+        env:
+          RENDER_PROFILE: ${{ inputs.render_profile }}
+        run: python production/f35_lightning/render.py
+      - name: Upload video and Burmese subtitles
+        uses: actions/upload-artifact@v4
+        with:
+          name: GI-KO-KO-F35-Lightning-II-3D-Explainer
+          path: |
+            output/f35/GI-KO-KO-F35-Lightning-II-3D-Explainer.mp4
+            output/f35/subtitles-my.srt
+            output/f35/narration-my.txt
+            output/f35/production-report.json
+          if-no-files-found: error
+          retention-days: 30
