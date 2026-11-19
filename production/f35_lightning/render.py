@@ -36,7 +36,7 @@ async def make_voice(i,text):
 
 async def main():
     voice_files=[]
-    for i,(text,) in enumerate(SECTIONS,1):
+    for i,text in enumerate(SECTIONS,1):
         p=await make_voice(i,text); voice_files.append(p)
         print(f"VOICE {i}/{len(SECTIONS)} complete",flush=True)
     concat=WORK/"voice-list.txt"
@@ -44,7 +44,7 @@ async def main():
         for p in voice_files:f.write("file '"+str(p.resolve())+"'\n")
     # Fit each narration beat into a 20-second chapter, leaving a natural pause.
     wavs=[]; srt=[]
-    for i,((txt,),src) in enumerate(zip(SECTIONS,voice_files)):
+    for i,(txt,src) in enumerate(zip(SECTIONS,voice_files)):
         d=probe(src); speed=max(1.0,d/18.5)
         speed=min(speed,1.8)
         dst=WORK/f"beat_{i+1:02d}.wav"
