@@ -192,7 +192,7 @@ for i,obj in enumerate(parts):
 scene=bpy.context.scene
 scene.render.resolution_x=1280; scene.render.resolution_y=720
 scene.render.resolution_percentage=100; scene.render.fps=12
-scene.frame_start=1; scene.frame_end=3600
+scene.frame_start=1; scene.frame_end=int(os.environ.get('F35_FRAME_END','3600'))
 # Eevee high-quality PBR look keeps the 3,600-frame cloud render feasible.
 try:
     scene.render.engine="BLENDER_EEVEE_NEXT"
@@ -217,4 +217,25 @@ if os.environ.get("F35_SMOKE_TEST")=="1":
     scene.render.filepath=os.path.join(out,"smoke_")
     bpy.ops.render.render(write_still=True)
 else:
-    bpy.ops.render.render(animation=True)
+    # Render in resumable 120-frame batches. Completed batches are retained on disk.
+    batch_size=max(1,int(os.environ.get('F35_BATCH_SIZE','120')))
+    first=max(1,int(os.environ.get('F35_FRAME_START','1')))
+    last=scene.frame_end
+    total=last-first+1
+    completed=0
+    for batch_start in range(first,last+1,batch_size):
+        batch_end=min(batch_start+batch_size-1,last)
+        expected=[os.path.join(out,f'frame_{fr:04d}.png') for fr in range(batch_start,batch_end+1)]
+        if all(os.path.isfile(p) and os.path.getsize(p)>0 for p in expected):
+            completed+=len(expected)
+            print(f'F35_PROGRESS {completed}/{total} frames ({completed*100//total}%) — batch already complete',flush=True)
+            continue
+        scene.render.filepath=os.path.join(out,'frame_')
+        scene.frame_start=batch_start
+        scene.frame_end=batch_end
+        scene.frame_set(batch_start)
+        print(f'F35_BATCH_START {batch_start}-{batch_end} / {last}',flush=True)
+        bpy.ops.render.render(animation=True)
+        completed+=len(expected)
+        print(f'F35_PROGRESS {completed}/{total} frames ({completed*100//total}%)',flush=True)
+    print('F35_RENDER_BATCHES_COMPLETE',flush=True)
