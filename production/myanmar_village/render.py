@@ -357,7 +357,7 @@ def main():
       "size_mb":round(output.stat().st_size/1_000_000,3),
       "size_limit_bytes":MAX_BYTES,
       "size_check":"PASS",
-      "visual_style":"cinematic illustrated 2.5D with slow camera motion (not full 3D rigged animation)",
+      "visual_style":"cinematic illustrated 2D with slow camera motion (not full 3D rigged animation)",
       "shots":len(BEATS)+1,
       "deepgram_voice_lines":len(BEATS),
       "streams":info.get("streams",[])
