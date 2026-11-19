@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p /tmp/f35-smoke
           blender -b --python production/f35_lightning/scene.py -- /tmp/f35-smoke
-          test -s /tmp/f35-smoke/smoke_0001.png
+          test -s /tmp/f35-smoke/smoke_.png
       - name: Render 3D explainer with Deepgram English narration
         env:
           RENDER_PROFILE: ${{ inputs.render_profile }}
