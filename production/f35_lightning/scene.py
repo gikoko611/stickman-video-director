@@ -200,7 +200,7 @@ except Exception:
     scene.render.engine="BLENDER_EEVEE"
 if hasattr(scene,"eevee"):
     profile=os.environ.get("RENDER_PROFILE","high")
-    scene.eevee.taa_render_samples={"high":128,"standard":64,"compact":32}.get(profile,128)
+    scene.eevee.taa_render_samples={"high":128,"standard":64,"low":32}.get(profile,128)
 scene.render.image_settings.file_format="PNG"
 scene.render.image_settings.color_mode="RGB"
 scene.render.image_settings.color_depth="8"
