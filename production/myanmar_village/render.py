@@ -119,7 +119,7 @@ def person(d, x, y, scale=1.0, role="boy", pose=0):
     skin,shirt,lower=palette.get(role,palette["boy"])
     s=scale
     # soft ground shadow
-    d.ellipse((x-42*s,y-8*s,x+42*s,y+10*s),fill=(28,35,28,90))
+    d.ellipse((x-42*s,y-8*s,x+42*s,y+10*s),fill=(28,35,28))
     # legs
     hip=(x,y-70*s)
     if pose%2:
