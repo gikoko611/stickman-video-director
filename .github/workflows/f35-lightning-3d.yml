@@ -6,8 +6,8 @@ on:
         description: "3D render profile"
         required: true
         type: choice
-        options: [high, standard, compact]
-        default: high
+        options: [low, standard, high]
+        default: low
 permissions:
   contents: read
 concurrency:
