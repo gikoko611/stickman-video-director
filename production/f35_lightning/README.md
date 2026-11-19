@@ -1,6 +1,6 @@
 # G.I KO KO — F-35C Lightning II 3D Explainer
 
-Five-minute F-35C carrier-variant educational animation rendered with Blender Eevee PBR and assembled with FFmpeg. The hybrid visual combines a cinematic aircraft hero model, carrier-specific exterior features, an animated exploded view, and technical callouts. Burmese narration uses the Microsoft Neural voice IDs my-MM-ThihaNeural / my-MM-NilarNeural. Burmese subtitles are delivered as a separate SRT file to avoid garbled glyphs in the video.
+Five-minute F-35C carrier-variant educational animation rendered with Blender Eevee PBR and assembled with FFmpeg. The hybrid visual combines a cinematic aircraft hero model, carrier-specific exterior features, an animated exploded view. Burmese narration uses the Microsoft Neural voice IDs my-MM-ThihaNeural / my-MM-NilarNeural. Burmese subtitles are delivered as a separate SRT file to avoid garbled glyphs in the video.
 
 ## Run
 1. Open GitHub Actions.
